@@ -8,7 +8,9 @@ import sys
 
 current_dir = os.getcwd()
 sys.stderr.write("Current directory" + str(current_dir) + "\n")
+#os.chdir('..')
 
+current_dir = os.getcwd()
 final_dir = os.path.join(current_dir,'data')
 sys.stderr.write("Data directory" + str(final_dir) + "\n")
 
@@ -32,12 +34,14 @@ test = copy.deepcopy(raw_data[(raw_data.index.year == 2012) &(raw_data.index.mon
 if not os.path.exists(final_dir):
     os.mkdir(final_dir)
     
-if len(os.listdir(final_dir)) > 1:
-    train.to_csv(dir+'train.csv')
-    val.to_csv(dir+'val.csv')
-    test.to_csv(dir+'test.csv')
-    sys.stderr.write('Data stored in' + str(final_dir))
-else:
+if 'train.csv' in os.listdir(final_dir):
     sys.stderr.write('Data already stored in' + str(final_dir))
+else:
+    train.to_csv(os.path.join(final_dir,'train.csv'))
+    val.to_csv(os.path.join(final_dir,'val.csv'))
+    test.to_csv(os.path.join(final_dir,'test.csv'))
+    sys.stderr.write('Data stored in' + str(final_dir))
+
+
 
 

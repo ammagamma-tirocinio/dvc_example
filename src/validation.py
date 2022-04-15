@@ -4,20 +4,22 @@ import sys
 import os
 import pickle
 import json
-import sklearn.metrics as metrics
-from sklearn.ensemble import AdaBoostRegressor
+import copy
 
-os.getcwd('..')
-dir = './data/'
+current_dir = os.getcwd()
+final_dir = os.path.join(current_dir,'data')
+sys.stderr.write("Current directory" + str(current_dir) + "\n")
 
 model_file = sys.argv[1]
-data_path = os.path.join(sys.argv[2]+"val.csv")
+data_path = sys.argv[2]
 scores_file = sys.argv[3]
 
 print(sys.argv[0])
 
 print(data_path)
-val = pd.read_csv(data_path + 'val.csv')
+df_val = pd.read_csv(os.path.join(data_path,'val.csv'))
+df_val.index = pd.to_datetime(df_val.dteday)
+val = copy.deepcopy(df_val.drop(columns = 'dteday'))
 
 X_val = val.iloc[:,:-1]
 y_val = val.iloc[:,-1]
@@ -31,8 +33,8 @@ with open(model_file,'rb') as fd:
 
 res = model.predict(X_val)
 MAPE = np.mean(np.abs(y_val - res) / y_val) * 100
-
-res.to_csv(dir+'results.csv')
+results = pd.DataFrame({'predcted': res, 'labels': y_val})
+results.to_csv(os.path.join(final_dir,'results.csv'))
 
 with open(scores_file, "w") as fd:
     json.dump({"MAPE": MAPE},

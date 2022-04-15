@@ -1,0 +1,23 @@
+stages:
+  loading:
+    cmd: python src/data_load.py
+    deps:
+    - src/data_load.py
+    outs:
+    - data/
+  train:
+    cmd: python src/train.py data/ model.pkl
+    deps:
+    - data/
+    - src/train.py
+    outs:
+    - model.pkl
+  evaluate:
+    cmd: python src/validation.py model.pkl data/ scores.json
+    deps:
+    - data/
+    - src/validation.py
+    - model.pkl
+    metrics:
+    - scores.json:
+        cache: false
