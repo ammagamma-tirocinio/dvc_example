@@ -1,0 +1,64 @@
+schema: '2.0'
+stages:
+  loading:
+    cmd: python src/data_load.py
+    deps:
+    - path: src/data_load.py
+      md5: 98281bb1198a027b8aac33d58c2b502f
+      size: 1984
+    outs:
+    - path: storage/
+      md5: d1fb9b058ab7c4f09047db6c9c4b8d72.dir
+      size: 57069
+      nfiles: 3
+  train:
+    cmd: python src/train.py storage/ model.pkl
+    deps:
+    - path: src/train.py
+      md5: e24b22aa0750f9221392ce79f61c442a
+      size: 804
+    - path: storage/
+      md5: d1fb9b058ab7c4f09047db6c9c4b8d72.dir
+      size: 57803
+      nfiles: 3
+    outs:
+    - path: model.pkl
+      md5: e1afbde93192f10836388dcfaedbc1e7
+      size: 61605
+      isexec: true
+  evaluate:
+    cmd: python src/validation.py model.pkl storage/ scores.json
+    deps:
+    - path: model.pkl
+      md5: e1afbde93192f10836388dcfaedbc1e7
+      size: 61605
+    - path: src/validation.py
+      md5: 281db15bca7bb39ac364108b1729e47e
+      size: 1195
+    - path: storage/
+      md5: 6b6d263e5e8842404958790a05a9b550.dir
+      size: 64889
+      nfiles: 4
+    outs:
+    - path: scores.json
+      md5: 8b4cef8d95529c807eed022275b0a23d
+      size: 33
+      isexec: true
+  testing:
+    cmd: python src/testing.py model.pkl 2012-09-05 storage/ current_score.json
+    deps:
+    - path: model.pkl
+      md5: e1afbde93192f10836388dcfaedbc1e7
+      size: 61605
+    - path: src/testing.py
+      md5: 96bdc3fa89725c0c764b20b3e6b16fb5
+      size: 1737
+    - path: storage/
+      md5: 6b6d263e5e8842404958790a05a9b550.dir
+      size: 64889
+      nfiles: 4
+    outs:
+    - path: current_score.json
+      md5: 548b295fb2ae3b1671e4047d5528995a
+      size: 33
+      isexec: true
